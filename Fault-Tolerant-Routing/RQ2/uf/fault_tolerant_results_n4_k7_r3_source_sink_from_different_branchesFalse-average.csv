@@ -1,0 +1,11 @@
+sample_size,n,k,r,source_sink_from_different_branches,uf_build_time,uf_connected,uf_connected_time,dfs_connected,dfs_path_length,dfs_time,bfs_connected,bfs_path_length,bfs_time,fffp_connected,fffp_path_length,fffp_time
+10,4,7,3,False,0.016168,True,1e-06,True,1151.4,0.034037,True,6.5,0.005236,True,9.8,0.00065
+20,4,7,3,False,0.016168,True,1e-06,True,1237.95,0.041699,True,6.6,0.005205,True,9.6,0.000329
+30,4,7,3,False,0.016168,True,1e-06,True,1297.433333,0.047461,True,6.566667,0.005087,True,9.466667,0.000222
+40,4,7,3,False,0.016168,True,1e-06,True,1301.325,0.047858,True,6.6,0.005064,True,9.525,0.000168
+50,4,7,3,False,0.016168,True,1e-06,True,1360.32,0.050751,True,6.66,0.005216,True,9.32,0.000136
+60,4,7,3,False,0.016168,True,1e-06,True,1317.383333,0.048205,True,6.666667,0.005228,True,9.233333,0.000114
+70,4,7,3,False,0.016168,True,1e-06,True,1318.557143,0.048706,True,6.685714,0.005283,True,9.342857,9.9e-05
+80,4,7,3,False,0.016168,True,1e-06,True,1310.725,0.04791,True,6.675,0.005255,True,9.4125,8.7e-05
+90,4,7,3,False,0.016168,True,1e-06,True,1295.855556,0.047075,True,6.655556,0.005213,True,9.444444,7.9e-05
+100,4,7,3,False,0.016168,True,1e-06,True,1275.04,0.045446,True,6.62,0.005128,True,9.48,7.1e-05

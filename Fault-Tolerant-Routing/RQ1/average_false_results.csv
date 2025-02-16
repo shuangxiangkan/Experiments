@@ -1,0 +1,11 @@
+n,k,r,source_sink_from_different_branches,uf_build_time,uf_connected,uf_connected_time,dfs_connected,dfs_path_length,dfs_time,bfs_connected,bfs_path_length,bfs_time,fffp_connected,fffp_path_length,fffp_time
+3,4,3,False,0.00015,True,1e-06,True,28.44,8.7e-05,True,3.25,6.4e-05,True,4.68,7e-06
+4,7,3,False,0.016168,True,1e-06,True,1275.04,0.045446,True,6.62,0.005128,True,9.48,7.1e-05
+6,3,5,False,0.006717,True,1e-06,True,392.12,0.007633,True,3.78,0.001775,True,6.67,5e-06
+2,4,2,False,1.9e-05,True,1e-06,True,6.18,1e-05,True,2.0,6e-06,True,3.0,1e-06
+4,4,3,False,0.001256,True,1e-06,True,122.68,0.000583,True,4.14,0.000465,True,6.21,1.9e-05
+5,5,4,False,0.024643,True,1e-06,True,1754.47,0.114714,True,5.54,0.007636,True,8.79,5.5e-05
+7,3,5,False,0.028,True,1e-06,True,1384.29,0.103871,True,4.41,0.007643,True,7.56,7e-06
+5,4,3,False,0.007894,True,1e-06,True,618.52,0.013225,True,4.69,0.002522,True,7.73,4e-05
+7,2,2,False,0.000695,True,1e-06,True,71.52,0.000659,True,2.6,0.000221,True,7.31,5e-06
+6,4,3,False,0.043076,True,1e-06,True,2381.79,0.292113,True,5.03,0.011152,True,9.05,8e-06
