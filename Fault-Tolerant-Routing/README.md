@@ -38,5 +38,5 @@
 Run the evaluation script to test the algorithm:
 
 ```sh
-python evaluation.py
+python3 evaluation.py
 ```
