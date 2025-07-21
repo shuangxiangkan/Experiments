@@ -93,8 +93,8 @@ if __name__ == "__main__":
     # n >=4, k >=4, 2 <= r <=n, h = 0或1
 
     # 基本测试
-    run_experiment(n=4, k=4, r=2, h=0, source_sink_from_different_branches=False)
-    # run_experiment(n=4, k=4, r=2, h = 1, source_sink_from_different_branches=True)
+    # run_experiment(n=4, k=4, r=2, h=0, source_sink_from_different_branches=False)
+    run_experiment(n=4, k=4, r=2, h = 1, source_sink_from_different_branches=True)
     # run_experiment(n=4, k=4, r=2, h = 1, source_sink_from_different_branches=False)
     # run_experiment(n=4, k=4, r=3, h=0, source_sink_from_different_branches=True)
     # run_experiment(n=4, k=4, r=3, h=0, source_sink_from_different_branches=False)

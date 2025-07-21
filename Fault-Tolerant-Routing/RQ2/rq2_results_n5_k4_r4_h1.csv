@@ -1,0 +1,11 @@
+n,k,r,h,source_sink_from_different_branches,astar_connected,astar_path_length,astar_time,bidirectional_bfs_connected,bidirectional_bfs_path_length,bidirectional_bfs_time
+5,4,4,1,False,True,4,0.000065,True,4,0.000134
+5,4,4,1,False,True,4,0.000072,True,4,0.000251
+5,4,4,1,False,True,4,0.000072,True,4,0.000226
+5,4,4,1,False,True,5,0.000306,True,5,0.000277
+5,4,4,1,False,True,3,0.000072,True,3,0.000019
+5,4,4,1,False,True,5,0.000125,True,6,0.000886
+5,4,4,1,False,True,6,0.000364,True,6,0.000463
+5,4,4,1,False,True,4,0.000087,True,4,0.000035
+5,4,4,1,False,True,5,0.000166,True,5,0.000332
+5,4,4,1,False,True,4,0.000103,True,4,0.000087

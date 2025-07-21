@@ -1,0 +1,11 @@
+n,k,r,source_sink_from_different_branches,uf_build_time,uf_connected,uf_connected_time,dfs_connected,dfs_path_length,dfs_time,bfs_connected,bfs_path_length,bfs_time,bidirectional_bfs_connected,bidirectional_bfs_path_length,bidirectional_bfs_time,astar_connected,astar_path_length,astar_time,hgbpc_connected,hgbpc_path_length,hgbpc_time,used_bfs
+4,4,2,True,0.001265,False,0.000002,False,-1,0.002059,False,-1,0.000922,False,-1,0.001166,False,-1,0.001604,False,-1,0.000000,False
+4,4,2,True,0.001265,False,0.000002,False,-1,0.001528,False,-1,0.000889,False,-1,0.001156,False,-1,0.001585,False,-1,0.000000,False
+4,4,2,True,0.001265,False,0.000001,False,-1,0.001588,False,-1,0.000886,False,-1,0.001135,False,-1,0.001599,False,-1,0.000000,False
+4,4,2,True,0.001265,False,0.000001,False,-1,0.001549,False,-1,0.000888,False,-1,0.001136,False,-1,0.001616,False,-1,0.000000,False
+4,4,2,True,0.001265,False,0.000001,False,-1,0.001537,False,-1,0.000889,False,-1,0.001122,False,-1,0.001572,False,-1,0.000000,False
+4,4,2,True,0.001265,False,0.000001,False,-1,0.001566,False,-1,0.000912,False,-1,0.001111,False,-1,0.001548,False,-1,0.000000,False
+4,4,2,True,0.001265,False,0.000001,False,-1,0.001608,False,-1,0.000893,False,-1,0.001118,False,-1,0.001551,False,-1,0.000000,False
+4,4,2,True,0.001265,False,0.000001,False,-1,0.001560,False,-1,0.000894,False,-1,0.001115,False,-1,0.001520,False,-1,0.000000,False
+4,4,2,True,0.001265,False,0.000001,False,-1,0.001548,False,-1,0.000911,False,-1,0.001113,False,-1,0.001586,False,-1,0.000000,False
+4,4,2,True,0.001265,False,0.000001,False,-1,0.001560,False,-1,0.000908,False,-1,0.001114,False,-1,0.001564,False,-1,0.000000,False
