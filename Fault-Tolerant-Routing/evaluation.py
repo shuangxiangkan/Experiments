@@ -3,7 +3,7 @@ import csv
 
 from AugmentedKAryNCube import AugmentedKAryNCube
 
-def run_experiment(n, k, r, h, source_sink_from_different_branches, iterations=20):
+def run_experiment(n, k, r, h, source_sink_from_different_branches, iterations=10):
     """
     运行实验，记录 100 次连通性检查数据，并存入 CSV 文件
     """
@@ -42,22 +42,34 @@ def run_experiment(n, k, r, h, source_sink_from_different_branches, iterations=2
         bfs_path_length = len(bfs_path) if bfs_connected else -1
         bfs_time = format(bfs_time, ".6f")
 
-        # 3. Find Fault-Free Path (FFFP)
-        # fffp_start = time.time()
-        fffp_connected, fffp_path, fffp_time, used_bfs = aq.find_fault_free_path(source, sink)
-        fffp_path_length = len(fffp_path) if fffp_connected else -1
-        fffp_time = format(fffp_time, ".6f")
+        # 3. Bidirectional BFS
+        bidirectional_bfs_connected, bidirectional_bfs_path, bidirectional_bfs_time = aq.bidirectional_bfs(source, sink)
+        bidirectional_bfs_path_length = len(bidirectional_bfs_path) if bidirectional_bfs_connected else -1
+        bidirectional_bfs_time = format(bidirectional_bfs_time, ".6f")
+
+        # 4. A*
+        astar_connected, astar_path, astar_time = aq.astar(source, sink)
+        astar_path_length = len(astar_path) if astar_connected else -1
+        astar_time = format(astar_time, ".6f")
+
+        # 5. HGBPC (Hybrid Greedy-BFS Path Construction)
+        # hgbpc_start = time.time()
+        hgbpc_connected, hgbpc_path, hgbpc_time, used_bfs = aq.find_fault_free_path(source, sink)
+        hgbpc_path_length = len(hgbpc_path) if hgbpc_connected else -1
+        hgbpc_time = format(hgbpc_time, ".6f")
 
         # 记录实验数据
         results.append([
             n, k, r, source_sink_from_different_branches, uf_build_time, uf_connected, uf_connected_time,
             dfs_connected, dfs_path_length, dfs_time,
             bfs_connected, bfs_path_length, bfs_time,
-            fffp_connected, fffp_path_length, fffp_time, used_bfs
+            bidirectional_bfs_connected, bidirectional_bfs_path_length, bidirectional_bfs_time,
+            astar_connected, astar_path_length, astar_time,
+            hgbpc_connected, hgbpc_path_length, hgbpc_time, used_bfs
         ])
 
     # 生成 CSV 文件名
-    output_file = f"./evaluation-test/fault_tolerant_results_n{n}_k{k}_r{r}_h{h}_source_sink_from_different_branches{source_sink_from_different_branches}.csv"
+    output_file = f"./evaluation-revision/fault_tolerant_results_n{n}_k{k}_r{r}_h{h}_source_sink_from_different_branches{source_sink_from_different_branches}.csv"
 
     # 写入 CSV 文件
     with open(output_file, mode="w", newline="") as file:
@@ -66,7 +78,9 @@ def run_experiment(n, k, r, h, source_sink_from_different_branches, iterations=2
             "n", "k", "r", "source_sink_from_different_branches", "uf_build_time", "uf_connected", "uf_connected_time",
             "dfs_connected", "dfs_path_length", "dfs_time",
             "bfs_connected", "bfs_path_length", "bfs_time",
-            "fffp_connected", "fffp_path_length", "fffp_time", "used_bfs"
+            "bidirectional_bfs_connected", "bidirectional_bfs_path_length", "bidirectional_bfs_time",
+            "astar_connected", "astar_path_length", "astar_time",
+            "hgbpc_connected", "hgbpc_path_length", "hgbpc_time", "used_bfs"
         ])
         writer.writerows(results)
 
@@ -78,8 +92,8 @@ if __name__ == "__main__":
 
     # n >=4, k >=4, 2 <= r <=n, h = 0或1
 
-    # run_experiment(n=4, k=4, r=2, h = 0, source_sink_from_different_branches=True)
-    # run_experiment(n=4, k=4, r=2, h = 0, source_sink_from_different_branches=False)
+    # 基本测试
+    run_experiment(n=4, k=4, r=2, h=0, source_sink_from_different_branches=False)
     # run_experiment(n=4, k=4, r=2, h = 1, source_sink_from_different_branches=True)
     # run_experiment(n=4, k=4, r=2, h = 1, source_sink_from_different_branches=False)
     # run_experiment(n=4, k=4, r=3, h=0, source_sink_from_different_branches=True)
@@ -182,7 +196,7 @@ if __name__ == "__main__":
     # run_experiment(n=6, k=5, r=4, h=1, source_sink_from_different_branches=True)
     # run_experiment(n=6, k=5, r=4, h=1, source_sink_from_different_branches=False)
 
-    run_experiment(n=6, k=6, r=2, h=0, source_sink_from_different_branches=True)
+    # run_experiment(n=6, k=6, r=2, h=0, source_sink_from_different_branches=True)
     # run_experiment(n=6, k=6, r=2, h=0, source_sink_from_different_branches=False)
     # run_experiment(n=6, k=6, r=2, h=1, source_sink_from_different_branches=True)
     # run_experiment(n=6, k=6, r=2, h=1, source_sink_from_different_branches=False)

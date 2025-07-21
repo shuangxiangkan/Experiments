@@ -5,6 +5,7 @@ import time
 from itertools import product
 import random
 from collections import deque
+import heapq
 
 import networkx as nx
 from matplotlib import pyplot as plt
@@ -525,9 +526,205 @@ class AugmentedKAryNCube:
         search_time = end_time - start_time
         return False, [], search_time
 
+    def _heuristic_distance(self, node1, node2):
+        """
+        计算两个节点之间的启发式距离（曼哈顿距离的环形版本）
+        考虑k-ary n-cube的环形拓扑结构
+        """
+        distance = 0
+        for i in range(self.n):
+            # 计算在第i维上的最短距离（考虑环形结构）
+            direct_dist = abs(node1[i] - node2[i])
+            wrap_dist = self.k - direct_dist
+            distance += min(direct_dist, wrap_dist)
+        return distance
+
+    def astar(self, start, end):
+        """
+        使用A*算法查找两个无故障节点之间的最短无故障路径
+
+        :param start: 起始节点
+        :param end: 目标节点
+        :return: (是否存在路径, 路径列表, 搜索时间)
+        """
+        if (self.node_states.get(start) == "faulty" or
+                self.node_states.get(end) == "faulty"):
+            return False, [], 0
+
+        start_time = time.time()
+
+        # 优先队列：(f_score, g_score, node, path)
+        # f_score = g_score + h_score
+        open_set = []
+        heapq.heappush(open_set, (0, 0, start, [start]))
+
+        # 记录已访问的节点和它们的最佳g_score
+        visited = {}
+        visited[start] = 0
+
+        while open_set:
+            f_score, g_score, current, path = heapq.heappop(open_set)
+
+            # 如果当前节点已经被更好的路径访问过，跳过
+            if current in visited and visited[current] < g_score:
+                continue
+
+            if current == end:
+                end_time = time.time()
+                search_time = end_time - start_time
+                return True, path, search_time
+
+            # 获取所有无故障邻居节点
+            neighbors = []
+
+            # 单维度邻居
+            for i in range(self.n):
+                for direction in [-1, 1]:
+                    neighbor = self._get_neighbor(current, i, direction)
+                    if self.node_states.get(neighbor) == "fault-free":
+                        neighbors.append(neighbor)
+
+            # 多维度邻居
+            for i in range(1, self.n):
+                for direction in [-1, 1]:
+                    neighbor = self._get_cascading_neighbor(current, i, direction)
+                    if self.node_states.get(neighbor) == "fault-free":
+                        neighbors.append(neighbor)
+
+            for neighbor in neighbors:
+                tentative_g_score = g_score + 1  # 每步的代价为1
+
+                # 如果这个邻居没有被访问过，或者找到了更好的路径
+                if neighbor not in visited or tentative_g_score < visited[neighbor]:
+                    visited[neighbor] = tentative_g_score
+                    h_score = self._heuristic_distance(neighbor, end)
+                    f_score = tentative_g_score + h_score
+                    new_path = path + [neighbor]
+                    heapq.heappush(open_set, (f_score, tentative_g_score, neighbor, new_path))
+
+        end_time = time.time()
+        search_time = end_time - start_time
+        return False, [], search_time
+
+    def _get_neighbors(self, node):
+        """
+        获取节点的所有无故障邻居
+        """
+        neighbors = []
+
+        # 单维度邻居
+        for i in range(self.n):
+            for direction in [-1, 1]:
+                neighbor = self._get_neighbor(node, i, direction)
+                if self.node_states.get(neighbor) == "fault-free":
+                    neighbors.append(neighbor)
+
+        # 多维度邻居
+        for i in range(1, self.n):
+            for direction in [-1, 1]:
+                neighbor = self._get_cascading_neighbor(node, i, direction)
+                if self.node_states.get(neighbor) == "fault-free":
+                    neighbors.append(neighbor)
+
+        return neighbors
+
+    def bidirectional_bfs(self, start, end):
+        """
+        使用双向BFS查找两个无故障节点之间的最短无故障路径
+        从起点和终点同时开始搜索，当两个搜索相遇时找到路径
+
+        :param start: 起始节点
+        :param end: 目标节点
+        :return: (是否存在路径, 路径列表, 搜索时间)
+        """
+        if (self.node_states.get(start) == "faulty" or
+                self.node_states.get(end) == "faulty"):
+            return False, [], 0
+
+        if start == end:
+            return True, [start], 0
+
+        start_time = time.time()
+
+        # 前向搜索：从起点开始
+        forward_queue = deque([start])
+        forward_visited = {start: None}  # 节点 -> 父节点
+
+        # 后向搜索：从终点开始
+        backward_queue = deque([end])
+        backward_visited = {end: None}  # 节点 -> 父节点
+
+        while forward_queue or backward_queue:
+            # 前向搜索一步
+            if forward_queue:
+                current_forward = forward_queue.popleft()
+
+                # 检查是否与后向搜索相遇
+                if current_forward in backward_visited:
+                    # 找到路径，重构完整路径
+                    path = self._reconstruct_bidirectional_path(
+                        current_forward, forward_visited, backward_visited)
+                    end_time = time.time()
+                    return True, path, end_time - start_time
+
+                # 扩展前向搜索
+                for neighbor in self._get_neighbors(current_forward):
+                    if neighbor not in forward_visited:
+                        forward_visited[neighbor] = current_forward
+                        forward_queue.append(neighbor)
+
+            # 后向搜索一步
+            if backward_queue:
+                current_backward = backward_queue.popleft()
+
+                # 检查是否与前向搜索相遇
+                if current_backward in forward_visited:
+                    # 找到路径，重构完整路径
+                    path = self._reconstruct_bidirectional_path(
+                        current_backward, forward_visited, backward_visited)
+                    end_time = time.time()
+                    return True, path, end_time - start_time
+
+                # 扩展后向搜索
+                for neighbor in self._get_neighbors(current_backward):
+                    if neighbor not in backward_visited:
+                        backward_visited[neighbor] = current_backward
+                        backward_queue.append(neighbor)
+
+        end_time = time.time()
+        return False, [], end_time - start_time
+
+    def _reconstruct_bidirectional_path(self, meeting_point, forward_visited, backward_visited):
+        """
+        重构双向BFS找到的路径
+
+        :param meeting_point: 两个搜索相遇的节点
+        :param forward_visited: 前向搜索的访问记录
+        :param backward_visited: 后向搜索的访问记录
+        :return: 完整路径列表
+        """
+        # 重构从起点到相遇点的路径
+        forward_path = []
+        current = meeting_point
+        while current is not None:
+            forward_path.append(current)
+            current = forward_visited[current]
+        forward_path.reverse()
+
+        # 重构从相遇点到终点的路径
+        backward_path = []
+        current = backward_visited[meeting_point]  # 跳过相遇点（避免重复）
+        while current is not None:
+            backward_path.append(current)
+            current = backward_visited[current]
+
+        # 合并路径
+        complete_path = forward_path + backward_path
+        return complete_path
+
     def test_connectivity_methods(self, node1, node2):
         """
-        测试并比较三种连通性检查方法
+        测试并比较五种连通性检查方法
         """
         # 1. 测试并查集方法
         start_time = time.time()
@@ -540,8 +737,14 @@ class AugmentedKAryNCube:
         # 3. 测试BFS
         bfs_connected, bfs_path, bfs_time = self.bfs(node1, node2)
 
-        # 4. 测试 find_fault_free_path
-        fffp_connected, fffp_path, fffp_time, used_bfs = self.find_fault_free_path(node1, node2)
+        # 4. 测试双向BFS
+        bidirectional_bfs_connected, bidirectional_bfs_path, bidirectional_bfs_time = self.bidirectional_bfs(node1, node2)
+
+        # 5. 测试A*
+        astar_connected, astar_path, astar_time = self.astar(node1, node2)
+
+        # 6. 测试 HGBPC (find_fault_free_path)
+        hgbpc_connected, hgbpc_path, hgbpc_time, used_bfs = self.find_fault_free_path(node1, node2)
 
         # 打印结果
         print(f"\n测试节点 {node1} 到 {node2} 的连通性:")
@@ -552,9 +755,15 @@ class AugmentedKAryNCube:
         print(f"BFS结果: {'连通' if bfs_connected else '不连通'}, 耗时: {bfs_time:.6f}秒")
         if bfs_connected:
             print(f"BFS路径: {' -> '.join(map(str, bfs_path))}")
-        print(f"FFFP结果: {'连通' if fffp_connected else '不连通'}, 耗时: {fffp_time:.6f}秒")
-        if fffp_connected:
-            print(f"FFFP路径: {' -> '.join(map(str, fffp_path))} "
+        print(f"双向BFS结果: {'连通' if bidirectional_bfs_connected else '不连通'}, 耗时: {bidirectional_bfs_time:.6f}秒")
+        if bidirectional_bfs_connected:
+            print(f"双向BFS路径: {' -> '.join(map(str, bidirectional_bfs_path))}")
+        print(f"A*结果: {'连通' if astar_connected else '不连通'}, 耗时: {astar_time:.6f}秒")
+        if astar_connected:
+            print(f"A*路径: {' -> '.join(map(str, astar_path))}")
+        print(f"HGBPC结果: {'连通' if hgbpc_connected else '不连通'}, 耗时: {hgbpc_time:.6f}秒")
+        if hgbpc_connected:
+            print(f"HGBPC路径: {' -> '.join(map(str, hgbpc_path))} "
                   f"{'(BFS used)' if used_bfs else '(Greedy used)'}")
 
     def print_node_states(self):
